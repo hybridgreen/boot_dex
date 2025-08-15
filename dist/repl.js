@@ -1,4 +1,5 @@
-import { createInterface } from "node:readline";
+import { createInterface } from "readline";
+import { getCommands } from "./commands.js";
 export function cleanInput(input) {
     return input.trim().toLowerCase().split(" ");
 }
@@ -15,7 +16,8 @@ export function startREPL() {
             read.prompt();
         }
         else {
-            console.log(`Your command was: ${words[0]}`);
+            const command = getCommands()[words[0]];
+            command.callback(getCommands());
             read.prompt();
         }
     });
