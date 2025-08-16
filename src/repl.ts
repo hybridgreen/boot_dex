@@ -17,6 +17,7 @@ export async function startREPL(state: State){
         }
         else{
             const commandName = words[0]
+            const args = [...words]
             const cmd = state.commands[commandName];
 
             if (!cmd) {
@@ -25,8 +26,9 @@ export async function startREPL(state: State){
             }
 
             try{
-                await cmd.callback(state);
+                await cmd.callback(state, ...args.slice(1));
                 state.read.prompt();
+                
             }catch(err){
                 if( err instanceof Error){
                     console.log(`An error occurred: ${err.message}`);

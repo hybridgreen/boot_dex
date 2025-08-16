@@ -13,7 +13,7 @@ export type State = {
 export type CLICommand = {
     name: string;
     description: string;
-    callback: (state: State) => Promise<void>;
+    callback: (state: State, ...arg: string[]) => Promise<void>;
 }
 
 export function initState() : State{

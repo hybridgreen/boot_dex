@@ -36,15 +36,18 @@ export class PokeAPI {
         headers:{
         }
     }
+
     const cachedValue = this.#cache.get(url)
     if(cachedValue){
         return cachedValue as Location;
       }
-
+    
+    
     const response = await fetch(url, settings);
     const data = await response.json()
+    //console.log(data)
     this.#cache.add(url,data)
-    return response.json();
+    return data;
   }
 }
 
@@ -61,4 +64,13 @@ export type ShallowLocations = {
 export type Location = {
   name: string,
   id: number,
+  pokemon_encounters: pokemon_encounters[],
+  location: string,
 };
+
+export type pokemon_encounters = {
+  pokemon:{
+    name: string,
+    url: string}
+
+}
