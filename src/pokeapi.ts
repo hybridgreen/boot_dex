@@ -1,38 +1,49 @@
 import { N } from "vitest/dist/chunks/environment.d.cL3nLXbE";
+import { Cache } from "./pokecache.js";
+import { type CacheEntry } from "./pokecache.js";
+
+
 
 export class PokeAPI {
   private static readonly baseURL = "https://pokeapi.co/api/v2";
-
-  constructor() {}
+  #cache : Cache;
+  constructor() {
+    this.#cache = new Cache(1000);
+  }
 
   async fetchLocations(pageURL?: string): Promise<ShallowLocations>{
 
-    const url = `${PokeAPI.baseURL}/location-area`;
-
     const settings : RequestInit= {
-        method:"GET",
-        headers:{
-        }
+    method:"GET",
     }
+    let url = `${PokeAPI.baseURL}/location-area`;
     if(pageURL){
-      const response = await fetch(pageURL, settings);
-      return response.json();
-    }
-    else{
-      const response = await fetch(url, settings);
-      return response.json();
+      url = pageURL;
     }
 
-  }
+      const response = await fetch(url, settings);
+      const data = await response.json()
+      this.#cache.add(url,data)
+      return data;
+    }
+
 
   async fetchLocation(locationName: string): Promise<Location> {
-    const Url = `${PokeAPI.baseURL}/location-area/${locationName}`
+    const url = `${PokeAPI.baseURL}/location-area/${locationName}`
+
     const settings : RequestInit= {
         method:"GET",
         headers:{
         }
     }
-    const response = await fetch(Url, settings);
+    const cachedValue = this.#cache.get(url)
+    if(cachedValue){
+        return cachedValue as Location;
+      }
+
+    const response = await fetch(url, settings);
+    const data = await response.json()
+    this.#cache.add(url,data)
     return response.json();
   }
 }
